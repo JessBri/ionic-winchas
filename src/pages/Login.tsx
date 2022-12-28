@@ -1,28 +1,36 @@
-import { IonButton, IonContent, IonItem, IonPage, IonTitle, IonToolbar, IonInput, IonImg, IonLabel } from '@ionic/react';
-import React, { useState, useEffect } from 'react';
+import { IonButton, IonContent, IonItem, IonPage, IonInput, IonImg, IonLabel, IonLoading } from '@ionic/react';
+import React, { useState } from 'react';
 import { Link, useHistory } from 'react-router-dom';
-import { loginUser } from '../firebaseConfig';
+import AuthContext from '../my-context';
 import { toast } from '../toast';
 import './Home.css';
 
 const Login: React.FC = () => {
+    const { login } = React.useContext(AuthContext);
+    const [busy, setBusy] = useState<boolean>(false)
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
     const history = useHistory();
 
-    async function login() {
-        const res = await loginUser(username, password)
+    const loginUser = async () => {
+        setBusy(true)
+        console.log(username, password);
+        let res = await login({ username: username, password: password });
+
+        console.log('login', res);
         if (!res) {
             toast('Ha ocurrido un error')
         } else {
             toast('Has iniciado sesion!')
-            history.push('/home')
+            history.push('/home', res)
         }
+        setBusy(false)
     }
 
     return (
         <IonPage>
             <IonContent className='ion-padding'>
+                <IonLoading isOpen={busy} />
                 <div className='ion-text-center'>
                     <IonImg src="assets/wincha.webp" />
 
@@ -39,7 +47,7 @@ const Login: React.FC = () => {
                         <IonLabel position="floating">Contraseña</IonLabel>
                         <IonInput type='password' onIonChange={(e: any) => setPassword(e.target.value)} />
                     </IonItem>
-                    <IonButton className='ion-margin-top login-button' expand='full' onClick={login}>Iniciar sesión</IonButton>
+                    <IonButton className='ion-margin-top login-button' expand='full' onClick={() => loginUser()}>Iniciar sesión</IonButton>
                 </div>
                 <div>
                     <p className='ion-text-center'>
