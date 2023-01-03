@@ -9,4 +9,5 @@ export default interface WinchaProps {
     latitude?: number;
     longitud?: number;
     foto?: any;
+    estado?: boolean;
 }

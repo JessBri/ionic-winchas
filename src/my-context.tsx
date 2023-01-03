@@ -183,7 +183,35 @@ export const AuthProvider: React.FC<PropsWithChildren> = ({ children }) => {
         );
     };
 
+    const queryObjectAllVehicles = ({ collection }: { collection: string; }) => {
+        let collectionRef = firebase.firestore().collection(collection);
+
+        let results: any = [];
+
+        return (
+            collectionRef
+                .where('content.estado', '==', true)
+                .get()
+                .then((querySnapshot) => {
+                    console.log('querySnapshot', querySnapshot);
+                    querySnapshot.forEach((doc) => {
+                        // doc.data() is never undefined for query doc snapshots
+                        results.push({
+                            id: doc.id,
+                            ...doc.data(),
+                        });
+                    });
+                    return results;
+                })
+                .catch((error) => {
+                    console.log("Error getting documents: ", error);
+                    return error;
+                })
+        );
+    };
+
     const queryObjectById = ({ collection, id }: { collection: string; id: string; }) => {
+        getUserData();
         let collectionRef = firebase.firestore().doc(collection + "/" + id);
 
         return (
@@ -274,6 +302,7 @@ export const AuthProvider: React.FC<PropsWithChildren> = ({ children }) => {
         createAccount,
         addObjectToCollection,
         queryObjectCollection,
+        queryObjectAllVehicles,
         queryObjectById,
         editObjectById,
         removeObjectFromCollection,

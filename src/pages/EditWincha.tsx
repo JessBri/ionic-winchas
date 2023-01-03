@@ -27,6 +27,7 @@ const EditWincha: React.FC<WinchaProps> = () => {
         latitude: 0,
         longitud: 0,
         foto: '',
+        estado: true
     });
 
 
@@ -113,15 +114,15 @@ const EditWincha: React.FC<WinchaProps> = () => {
                     <IonInput onIonChange={(e: any) => setItem({ ...item, anio: e.target.value })} value={item.anio} />
                 </IonItem >
                 <IonItem>
-                    <IonLabel position="floating">Altura</IonLabel>
+                    <IonLabel position="floating">Altura(m)</IonLabel>
                     <IonInput onIonChange={(e: any) => setItem({ ...item, altura: e.target.value })} value={item.altura} />
                 </IonItem >
                 <IonItem>
-                    <IonLabel position="floating">Largo</IonLabel>
+                    <IonLabel position="floating">Largo(m)</IonLabel>
                     <IonInput onIonChange={(e: any) => setItem({ ...item, largo: e.target.value })} value={item.largo} />
                 </IonItem >
                 <IonItem>
-                    <IonLabel position="floating">Peso</IonLabel>
+                    <IonLabel position="floating">Peso(kg)</IonLabel>
                     <IonInput onIonChange={(e: any) => setItem({ ...item, peso: e.target.value })} value={item.peso} />
                 </IonItem >
                 <IonItem >
