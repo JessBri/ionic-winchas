@@ -29,7 +29,7 @@ export const Example = () => {
             <IonMenu contentId="main-content">
                 <IonHeader>
                     <IonToolbar>
-                        <IonTitle>Menu Content</IonTitle>
+                        <IonTitle>Menu</IonTitle>
                     </IonToolbar>
                 </IonHeader>
                 <IonContent className="ion-padding">
@@ -37,6 +37,9 @@ export const Example = () => {
                         <IonMenuToggle auto-hide="false">
                             <IonItem button routerLink={"/home"} routerDirection="none">
                                 <IonLabel>Home</IonLabel>
+                            </IonItem>
+                            <IonItem button routerLink={"/editUser"} routerDirection="none">
+                                <IonLabel>Actualizar mis datos</IonLabel>
                             </IonItem>
                             <IonItem button onClick={() => logoutUser()}>
                                 <IonLabel>Cerrar sesión</IonLabel>

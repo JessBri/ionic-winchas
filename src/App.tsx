@@ -30,6 +30,7 @@ import { Example } from './components/Menu';
 import CreateWincha from './pages/CreateWincha';
 import DetalleWincha from './pages/DetalleWincha';
 import EditWincha from './pages/EditWincha';
+import EditUser from './pages/EditUser';
 
 setupIonicReact();
 
@@ -44,18 +45,20 @@ const App: React.FC = () => {
         setShowLoading(false);
       })();
     }
-  }, [initialize, showLoading]);
+  }, [initialize, showLoading, setShowLoading]);
 
-  if (showLoading) {
-    return (
-      <IonApp>
-        <IonLoading message="Cargando" isOpen={showLoading} />
-      </IonApp>
-    );
-  }
+  // if (showLoading) {
+  //   setShowLoading(false);
+  //   return (
+  //     <IonApp>
+  //       <IonLoading message="Cargando" isOpen={showLoading} />
+  //     </IonApp>
+  //   );
+  // }
 
   return (
     <IonApp>
+      {/* <IonLoading message="Cargando" isOpen={showLoading} /> */}
       {!authValues.authenticated ? (
         <IonReactRouter>
 
@@ -89,6 +92,9 @@ const App: React.FC = () => {
             </Route>
             <Route exact path="/detalleWincha/:id">
               <DetalleWincha />
+            </Route>
+            <Route exact path="/editUser">
+              <EditUser />
             </Route>
           </IonRouterOutlet>
         </IonReactRouter>
