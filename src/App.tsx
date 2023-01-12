@@ -47,14 +47,14 @@ const App: React.FC = () => {
     }
   }, [initialize, showLoading, setShowLoading]);
 
-  // if (showLoading) {
-  //   setShowLoading(false);
-  //   return (
-  //     <IonApp>
-  //       <IonLoading message="Cargando" isOpen={showLoading} />
-  //     </IonApp>
-  //   );
-  // }
+  if (showLoading) {
+    // setShowLoading(false);
+    return (
+      <IonApp>
+        <IonLoading message="Cargando" isOpen={showLoading} />
+      </IonApp>
+    );
+  }
 
   return (
     <IonApp>

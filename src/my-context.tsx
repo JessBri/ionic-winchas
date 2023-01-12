@@ -57,6 +57,7 @@ export const AuthProvider: React.FC<PropsWithChildren> = ({ children }) => {
                         });
                         resolve(true);
                     }).catch((error) => {
+                        console.log('error', error);
                         setAuthValues({
                             ...authValues,
                             authenticated: true,

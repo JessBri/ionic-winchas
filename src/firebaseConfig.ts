@@ -1,10 +1,10 @@
 export const FIREBASE_CONFIG = {
-    apiKey: "AIzaSyA7DgwYsNu5L4cCeuW6_vHNNkL6qWVRx-8",
-    authDomain: "ionic-winchas.firebaseapp.com",
-    projectId: "ionic-winchas",
-    storageBucket: "ionic-winchas.appspot.com",
-    messagingSenderId: "105924067139",
-    appId: "1:105924067139:web:9cb2c1b8729c751c06f9f6"
+    apiKey: "AIzaSyAdlit1lljqxJOPGS-qI_DvZR0UHyEnaSc",
+    authDomain: "winchas-aaa6a.firebaseapp.com",
+    projectId: "winchas-aaa6a",
+    storageBucket: "winchas-aaa6a.appspot.com",
+    messagingSenderId: "650136141244",
+    appId: "1:650136141244:web:c8652ed7051d61ab157fb9"
 };
 
 

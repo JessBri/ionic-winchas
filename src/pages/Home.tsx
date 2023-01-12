@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { IonApp, IonButton, IonButtons, IonContent, IonHeader, IonItem, IonLabel, IonList, IonLoading, IonPage, IonTitle, IonToolbar, IonImg, IonThumbnail, IonMenuButton, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle, IonCard } from '@ionic/react';
+import { IonApp, IonButton, IonButtons, IonContent, IonHeader, IonItem, IonLabel, IonList, IonLoading, IonPage, IonTitle, IonToolbar, IonImg, IonThumbnail, IonMenuButton, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle, IonCard, IonText } from '@ionic/react';
 import AuthContext from "../my-context";
 import { useHistory } from 'react-router';
 
@@ -16,9 +16,11 @@ const Home: React.FC = () => {
   React.useEffect(() => {
     if (showLoading) {
       (async () => {
+        console.log('aquii');
         let user = await getUserData();
         setUser(user);
         setShowLoading(false);
+        console.log('aquii', user, showLoading);
       })();
 
     }
@@ -52,6 +54,7 @@ const Home: React.FC = () => {
 
 
   if (!showLoading && user) {
+    console.log('aquii 22');
     console.log(authValues.userInfo);
     if (authValues.userInfo?.perfil === 'C') {
       console.log("Cliente");
@@ -82,24 +85,26 @@ const Home: React.FC = () => {
       </IonHeader>
       <IonContent fullscreen>
         <IonLoading message="Consultando datos" isOpen={showBusy} />
-        <IonCard>
-          <IonCardHeader>
-            <IonCardTitle>Lista de Winchas</IonCardTitle>
-            <IonCardSubtitle>{authValues.userInfo?.perfil === 'C' ? 'Esta es la lista de winchas disponibles' : 'Esta es la lista de todas mis winchas'}</IonCardSubtitle>
-          </IonCardHeader>
-          <IonCardContent>
-            <IonList>
-              {winchas?.map((doc: any) =>
-                <IonItem key={doc.id} routerLink={`/detalleWincha/${doc.id}`}>
-                  <IonThumbnail slot="start">
-                    <IonImg src={doc.content.foto}></IonImg>
-                  </IonThumbnail>
-                  <IonLabel>{doc.content.marca} {doc.content.placa}</IonLabel>
-                </IonItem>
-              )}
-            </IonList>
-          </IonCardContent>
-        </IonCard>
+        <IonText color="primary">
+          <h3>Lista de winchas disponibles</h3>
+        </IonText >
+        <IonList>
+          {winchas?.map((doc: any) =>
+            <IonItem className='itemCard' key={doc.id} routerLink={`/detalleWincha/${doc.id}`}>
+
+              <IonThumbnail slot="start">
+                <IonImg src={doc.content.foto}></IonImg>
+              </IonThumbnail>
+
+              {doc.price ? (<div>
+                <IonLabel className='itemTitle'>{doc.content.marca} {doc.content.placa}</IonLabel>
+                <IonLabel>${doc.price.precioKilometro} por levantamiento</IonLabel>
+                <IonLabel>${doc.price.precioLevantamiento} por kilometro</IonLabel>
+              </div>) : (<div><IonLabel>{doc.content.marca} {doc.content.placa}</IonLabel></div>)}
+
+            </IonItem>
+          )}
+        </IonList>
       </IonContent>
     </IonPage>
   );
