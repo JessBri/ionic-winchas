@@ -212,7 +212,8 @@ function DetalleWincha() {
                                     <IonItem>
                                         <IonLabel>No ha registrado un precio</IonLabel>
                                     </IonItem>
-                                    <IonButton className='login-button' expand='full' onClick={() => setIsOpen(true)}>Agregar Precio</IonButton>
+                                    {authValues.userInfo?.perfil === 'P' ? (<IonButton className='login-button' expand='full' onClick={() => setIsOpen(true)}>Agregar Precio</IonButton>
+                                    ) : (<IonButton className='login-button' expand='full' onClick={() => reservarVehicle()}>Solicitar</IonButton>)}
                                 </IonCardContent>
                             </IonCard>
                         )}

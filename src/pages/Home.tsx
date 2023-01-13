@@ -100,7 +100,7 @@ const Home: React.FC = () => {
                 <IonLabel className='itemTitle'>{doc.content.marca} {doc.content.placa}</IonLabel>
                 <IonLabel>${doc.price.precioKilometro} por levantamiento</IonLabel>
                 <IonLabel>${doc.price.precioLevantamiento} por kilometro</IonLabel>
-              </div>) : (<div><IonLabel>{doc.content.marca} {doc.content.placa}</IonLabel></div>)}
+              </div>) : (<div><IonLabel className='itemTitle'>{doc.content.marca} {doc.content.placa}</IonLabel></div>)}
 
             </IonItem>
           )}
