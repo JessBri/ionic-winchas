@@ -112,24 +112,24 @@ const DetalleWincha: React.FC = () => {
     }
 
     const reservarVehicle = async () => {
-        // setShowBusy(true)
-        // pedido.precioLevantamiento = wincha.price.precioLevantamiento;
-        // pedido.precioKilometro = wincha.price.precioKilometro;
-        // pedido.estado = 'S';
-        // pedido.fechaSolicitud = new Date().toLocaleString();
-        // pedido.latOrigen = item.longitud;
-        // pedido.lonOrigen = item.latitude;
-        // pedido.wincha = params.id;
-        // pedido.usuario = authValues.user.multiFactor.user.uid;
-        // console.log('PEDIDO', pedido);
-        // let res = await addObjectToCollection({ collection: "orders", objectData: pedido });
-        // if (!res) {
-        //     toast('Ha ocurrido un error')
-        // } else {
-        //     toast('La solicitud se ha registrado exitosamente!')
-        sendEmail();
-        // }
-        // setShowBusy(false)
+        setShowBusy(true)
+        pedido.precioLevantamiento = wincha.price.precioLevantamiento;
+        pedido.precioKilometro = wincha.price.precioKilometro;
+        pedido.estado = 'S';
+        pedido.fechaSolicitud = new Date().toLocaleString();
+        pedido.latOrigen = item.longitud;
+        pedido.lonOrigen = item.latitude;
+        pedido.wincha = params.id;
+        pedido.usuario = authValues.user.multiFactor.user.uid;
+        console.log('PEDIDO', pedido);
+        let res = await addObjectToCollection({ collection: "orders", objectData: pedido });
+        if (!res) {
+            toast('Ha ocurrido un error')
+        } else {
+            toast('La solicitud se ha registrado exitosamente!')
+            sendEmail();
+        }
+        setShowBusy(false)
     }
 
     const addPrice = async () => {
