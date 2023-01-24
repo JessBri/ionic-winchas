@@ -1,20 +1,21 @@
 import React, { useState } from 'react';
-import { IonApp, IonButton, IonButtons, IonContent, IonHeader, IonItem, IonLabel, IonLoading, IonPage, IonTitle, IonToolbar, IonImg, IonThumbnail, IonMenuButton, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle, IonCard, IonIcon, IonList, IonNavLink, IonModal, IonInput } from '@ionic/react';
+import { IonApp, IonButton, IonButtons, IonContent, IonHeader, IonItem, IonLabel, IonLoading, IonPage, IonTitle, IonToolbar, IonImg, IonThumbnail, IonMenuButton, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle, IonCard, IonIcon, IonList, IonNavLink, IonModal, IonInput, IonText } from '@ionic/react';
 import { Geolocation } from '@capacitor/geolocation';
 import AuthContext from "../my-context";
 import { useHistory } from 'react-router';
 import { Link, useParams } from 'react-router-dom';
-import { trash, pencil, arrowBack, navigate } from 'ionicons/icons';
+import { trash, pencil, arrowBack, navigate, call, logoWhatsapp } from 'ionicons/icons';
+import { EmailComposer } from '@awesome-cordova-plugins/email-composer'
 
 
 import './Home.css';
 import { toast } from '../toast';
 
-function DetalleWincha() {
-    const { authValues, queryObjectById, editObjectById, removeObjectFromCollection } = React.useContext(AuthContext);
+const DetalleWincha: React.FC = () => {
+    const { authValues, queryObjectById, editObjectById, removeObjectFromCollection, addObjectToCollection } = React.useContext(AuthContext);
     const params = useParams<{ id: string }>();
     const [showLoading, setShowLoading] = React.useState<boolean>(true);
-    const [showBusy, setShowBusy] = React.useState<boolean>(false);
+    const [showBusy, setShowBusy] = React.useState<boolean>(true);
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const [wincha, setWincha] = React.useState<any>();
     const history = useHistory();
@@ -26,15 +27,41 @@ function DetalleWincha() {
         precioLevantamiento: 0,
         precioKilometro: 0,
     });
-    console.log(params);
+    const [pedido, setPedido] = useState<any>({
+        precioLevantamiento: 0,
+        precioKilometro: 0,
+        estado: '',
+        fechaSolicitud: '',
+        latOrigen: '',
+        lonOrigen: '',
+        latDestino: '',
+        lonDestino: '',
+        wincha: '',
+        usuario: ''
+    });
+    // console.log(params);
+    // if (wincha !== null && !showBusy) {
+    //     if (wincha.owner === '') {
+    //         setShowLoading(true);
+    //     }
 
+    // }
 
+    React.useEffect(() => {
+        if (showLoading) {
+            (async () => {
+                let res = await queryObjectById({ collection: "vehicles", id: params.id });
+                setWincha(res);
+                console.log('res detalle', res);
+            })();
+            setShowLoading(false);
+        }
 
-    const getVehicleById = async () => {
-        let res = await queryObjectById({ collection: "vehicles", id: params.id });
+    }, [params.id, queryObjectById, showLoading, wincha]);
 
-        setWincha(res);
-        console.log("WINCHAS", res);
+    function clear() {
+        wincha.owner = '';
+        console.log('CLEAR');
     }
 
     const deleteVehicleById = async () => {
@@ -59,14 +86,50 @@ function DetalleWincha() {
             longitud: longitude,
             latitude: latitude
         })
+
     }
 
     function cancel() {
         setIsOpen(false);
     }
 
-    const reservarVehicle = async () => {
+    const sendEmail = async () => {
+        let email = {
+            app: 'gmail',
+            to: 'jessica.arciniega1795@gmail.com',
+            // attachments: [
+            //     'file://img/logo.png',
+            //     'res://icon.png',
+            //     'base64:icon.png//iVBORw0KGgoAAAANSUhEUg...',
+            //     'file://README.pdf'
+            // ],
+            subject: 'Tienes una nueva solicitud de wincha',
+            body: 'How are you? Nice greetings from Leipzig',
+            isHtml: true
+        };
+        let res = await EmailComposer.open(email);
+        console.log('EMAIL', res);
+    }
 
+    const reservarVehicle = async () => {
+        // setShowBusy(true)
+        // pedido.precioLevantamiento = wincha.price.precioLevantamiento;
+        // pedido.precioKilometro = wincha.price.precioKilometro;
+        // pedido.estado = 'S';
+        // pedido.fechaSolicitud = new Date().toLocaleString();
+        // pedido.latOrigen = item.longitud;
+        // pedido.lonOrigen = item.latitude;
+        // pedido.wincha = params.id;
+        // pedido.usuario = authValues.user.multiFactor.user.uid;
+        // console.log('PEDIDO', pedido);
+        // let res = await addObjectToCollection({ collection: "orders", objectData: pedido });
+        // if (!res) {
+        //     toast('Ha ocurrido un error')
+        // } else {
+        //     toast('La solicitud se ha registrado exitosamente!')
+        sendEmail();
+        // }
+        // setShowBusy(false)
     }
 
     const addPrice = async () => {
@@ -100,11 +163,13 @@ function DetalleWincha() {
         setShowBusy(false)
     }
 
-    if (showLoading) {
-        getVehicleById();
-        addLocation();
-        setShowLoading(false);
+    if (!showLoading && wincha && showBusy) {
+        // getVehicleById();
 
+        addLocation();
+
+        // setShowLoading(false);
+        setShowBusy(false);
     }
 
     return (
@@ -112,7 +177,7 @@ function DetalleWincha() {
             <IonHeader>
                 <IonToolbar>
                     <IonButtons slot="start">
-                        <IonButton routerLink={"/home"}><IonIcon slot='icon-only' icon={arrowBack}></IonIcon></IonButton>
+                        <IonButton routerLink={"/home"} onClick={() => clear()}><IonIcon slot='icon-only' icon={arrowBack}></IonIcon></IonButton>
                     </IonButtons>
                     <IonTitle>Detalle Wincha</IonTitle>
 
@@ -128,7 +193,7 @@ function DetalleWincha() {
                 </IonToolbar>
             </IonHeader>
             <IonContent fullscreen>
-                <IonLoading isOpen={showBusy} />
+                <IonLoading message="Cargando wincha" isOpen={showBusy} duration={1000} />
                 {wincha ? (
                     <div>
                         <IonCard>
@@ -217,6 +282,18 @@ function DetalleWincha() {
                                 </IonCardContent>
                             </IonCard>
                         )}
+                        {authValues.userInfo?.perfil === 'P' ? (<></>) : (
+                            <IonCard>
+                                <IonText>
+                                    <h3>¿Necesitas más información?</h3>
+                                </IonText>
+                                <IonCardContent><div className='divButtons'>
+                                    <a className='linkButton' target="_blank" rel="noreferrer" href={`tel:${authValues.userInfo.telefono}`}><IonIcon icon={call}></IonIcon></a>
+                                    <a className='linkButton' target="_blank" rel="noreferrer" href={`https://api.whatsapp.com/send?phone=${authValues.userInfo.telefono}&text=Hola,%20necesito%20informacion%20de%20la%20wincha%20${wincha.content.placa}`}
+                                    ><IonIcon icon={logoWhatsapp}></IonIcon>
+                                    </a></div>
+                                </IonCardContent>
+                            </IonCard>)}
                         <IonModal isOpen={isOpen}>
                             <IonHeader>
                                 <IonToolbar>

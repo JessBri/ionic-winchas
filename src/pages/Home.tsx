@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { IonApp, IonButton, IonButtons, IonContent, IonHeader, IonItem, IonLabel, IonList, IonLoading, IonPage, IonTitle, IonToolbar, IonImg, IonThumbnail, IonMenuButton, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle, IonCard, IonText } from '@ionic/react';
+import React from 'react';
+import { IonButton, IonButtons, IonContent, IonHeader, IonItem, IonLabel, IonList, IonLoading, IonPage, IonTitle, IonToolbar, IonImg, IonThumbnail, IonMenuButton, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle, IonCard, IonText } from '@ionic/react';
 import AuthContext from "../my-context";
 import { useHistory } from 'react-router';
 
@@ -90,7 +90,7 @@ const Home: React.FC = () => {
         </IonText >
         <IonList>
           {winchas?.map((doc: any) =>
-            <IonItem className='itemCard' key={doc.id} routerLink={`/detalleWincha/${doc.id}`}>
+            <IonItem className='itemCard' key={doc.id} onClick={() => { history.replace(`/detalleWincha/${doc.id}`); history.go(1) }}>
 
               <IonThumbnail slot="start">
                 <IonImg src={doc.content.foto}></IonImg>

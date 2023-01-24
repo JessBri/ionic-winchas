@@ -18,6 +18,7 @@ export const AuthProvider: React.FC<PropsWithChildren> = ({ children }) => {
     const [authValues, setAuthValues] = React.useState<any>({
         authenticated: false,
         user: null,
+        uid: null,
         userInfo: null,
         errors: null,
         winchas: null,
@@ -32,7 +33,9 @@ export const AuthProvider: React.FC<PropsWithChildren> = ({ children }) => {
                     ...authValues,
                     authenticated: true,
                     user: { ...authUser },
+                    uid: firebase.auth().currentUser?.uid
                 });
+                getUserData();
                 resolve(true);
             } else {
                 resolve(false);
@@ -54,6 +57,7 @@ export const AuthProvider: React.FC<PropsWithChildren> = ({ children }) => {
                             ...authValues,
                             authenticated: true,
                             userInfo: { ...doc.data() },
+                            uid: firebase.auth().currentUser?.uid
                         });
                         resolve(true);
                     }).catch((error) => {
@@ -105,7 +109,8 @@ export const AuthProvider: React.FC<PropsWithChildren> = ({ children }) => {
                         ...authValues,
                         authenticated: true,
                         user: { ...authUser },
-                        userInfo: { ...newUserData }
+                        userInfo: { ...newUserData },
+                        uid: firebase.auth().currentUser?.uid
                     });
                     resolve(true);
                 } else {

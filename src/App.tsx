@@ -75,7 +75,7 @@ const App: React.FC = () => {
           </IonRouterOutlet>
         </IonReactRouter>
       ) : (
-        <IonReactRouter forceRefresh={true}>
+        <IonReactRouter>
           <Example />
           <IonRouterOutlet>
             <Route exact path="/">
