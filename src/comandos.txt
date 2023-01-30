@@ -1,0 +1,19 @@
+npm i ionic@latest -g
+npm i firebase --save
+npm i @types/firebase --save-dev
+npm install --save react-firebase-hooks
+
+
+npm install @capacitor/geolocation
+npm install @capacitor/camera
+npx cap sync
+
+npm i cordova-plugin-email-composer
+npm install --save @ionic-native/email-composer
+npm i @awesome-cordova-plugins/email-composer @awesome-cordova-plugins/core
+						
+						
+ionic 6.20.4
+node v16.14.2
+npm 8.5.0
+			
