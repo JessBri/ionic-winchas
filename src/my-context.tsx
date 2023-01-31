@@ -101,7 +101,8 @@ export const AuthProvider: React.FC<PropsWithChildren> = ({ children }) => {
                         telefono: telefono,
                         imagen: "",
                         direccion: direccion,
-                        perfil: typeUser
+                        perfil: typeUser,
+                        email:username
                     }
 
                     await usersRef.set(newUserData);
@@ -180,6 +181,7 @@ export const AuthProvider: React.FC<PropsWithChildren> = ({ children }) => {
                             ...doc.data(),
                         });
                     });
+                    console.log('RESULTS', results);
                     return results;
                 })
                 .catch((error) => {
@@ -202,6 +204,61 @@ export const AuthProvider: React.FC<PropsWithChildren> = ({ children }) => {
                     console.log('querySnapshot', querySnapshot);
                     querySnapshot.forEach((doc) => {
                         // doc.data() is never undefined for query doc snapshots
+                        results.push({
+                            id: doc.id,
+                            ...doc.data(),
+                        });
+                    });
+                    return results;
+                })
+                .catch((error) => {
+                    console.log("Error getting documents: ", error);
+                    return error;
+                })
+        );
+    };
+
+    const queryOrdersByProveedor = ({ collection }: { collection: string; }) => {
+        let currentUserId = firebase.auth().currentUser?.uid;
+        let collectionRef = firebase.firestore().collection(collection);
+
+        let results: any = [];
+
+        return (
+            collectionRef
+                .where('content.proveedor', '==', currentUserId)
+                .get()
+                .then((querySnapshot) => {
+                    console.log('querySnapshot', querySnapshot);
+                    querySnapshot.forEach((doc) => {
+                        // doc.data() is never undefined for query doc snapshots
+                        results.push({
+                            id: doc.id,
+                            ...doc.data(),
+                        });
+                    });
+                    return results;
+                })
+                .catch((error) => {
+                    console.log("Error getting documents: ", error);
+                    return error;
+                })
+        );
+    };
+
+    const queryOrdersByCliente= ({ collection }: { collection: string; }) => {
+        let currentUserId = firebase.auth().currentUser?.uid;
+        let collectionRef = firebase.firestore().collection(collection);
+
+        let results: any = [];
+
+        return (
+            collectionRef
+                .where('content.usuario', '==', currentUserId,)
+                .get()
+                .then((querySnapshot) => {
+                    console.log('querySnapshot', querySnapshot);
+                    querySnapshot.forEach(async (doc) => {
                         results.push({
                             id: doc.id,
                             ...doc.data(),
@@ -308,7 +365,9 @@ export const AuthProvider: React.FC<PropsWithChildren> = ({ children }) => {
         createAccount,
         addObjectToCollection,
         queryObjectCollection,
+        queryOrdersByCliente,
         queryObjectAllVehicles,
+        queryOrdersByProveedor,
         queryObjectById,
         editObjectById,
         removeObjectFromCollection,

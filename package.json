@@ -28,7 +28,7 @@
     "@types/react-router": "^5.1.11",
     "@types/react-router-dom": "^5.1.7",
     "cordova-plugin-email-composer": "^0.10.1",
-    "firebase": "^9.15.0",
+    "firebase": "^9.16.0",
     "history": "^4.9.0",
     "ionicons": "^6.0.3",
     "react": "^18.2.0",

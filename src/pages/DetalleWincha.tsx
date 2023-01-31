@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { IonApp, IonButton, IonButtons, IonContent, IonHeader, IonItem, IonLabel, IonLoading, IonPage, IonTitle, IonToolbar, IonImg, IonThumbnail, IonMenuButton, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle, IonCard, IonIcon, IonList, IonNavLink, IonModal, IonInput, IonText } from '@ionic/react';
+import { IonApp, IonButton, IonButtons, IonContent, IonHeader, IonItem, IonLabel, IonLoading, IonPage, IonTitle, IonToolbar, IonImg, IonThumbnail, IonMenuButton, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle, IonCard, IonIcon, IonList, IonNavLink, IonModal, IonInput, IonText, useIonViewDidEnter } from '@ionic/react';
 import { Geolocation } from '@capacitor/geolocation';
 import AuthContext from "../my-context";
 import { useHistory } from 'react-router';
@@ -37,15 +37,14 @@ const DetalleWincha: React.FC = () => {
         latDestino: '',
         lonDestino: '',
         wincha: '',
-        usuario: ''
+        usuario: '',
+        proveedor:''
     });
-    // console.log(params);
-    // if (wincha !== null && !showBusy) {
-    //     if (wincha.owner === '') {
-    //         setShowLoading(true);
-    //     }
-
-    // }
+    
+    useIonViewDidEnter(() => {
+        setShowLoading(true);
+        setShowBusy(true);
+    });
 
     React.useEffect(() => {
         if (showLoading) {
@@ -96,31 +95,28 @@ const DetalleWincha: React.FC = () => {
     const sendEmail = async () => {
         let email = {
             app: 'gmail',
-            to: 'jessica.arciniega1795@gmail.com',
-            // attachments: [
-            //     'file://img/logo.png',
-            //     'res://icon.png',
-            //     'base64:icon.png//iVBORw0KGgoAAAANSUhEUg...',
-            //     'file://README.pdf'
-            // ],
+            to: authValues.userInfo.email,
             subject: 'Tienes una nueva solicitud de wincha',
-            body: 'How are you? Nice greetings from Leipzig',
+            body: `El usuario ${authValues.userInfo.nombre} ${authValues.userInfo.nombre} ha solicitado el alquiler de la wincha ${wincha.content.placa} ${wincha.content.marca}`,
             isHtml: true
         };
         let res = await EmailComposer.open(email);
         console.log('EMAIL', res);
     }
 
-    const reservarVehicle = async () => {
+    const createOrder = async () => {
         setShowBusy(true)
-        pedido.precioLevantamiento = wincha.price.precioLevantamiento;
-        pedido.precioKilometro = wincha.price.precioKilometro;
+        if(wincha.price){
+            pedido.precioLevantamiento = wincha.price.precioLevantamiento;
+            pedido.precioKilometro = wincha.price.precioKilometro;
+        }
         pedido.estado = 'S';
         pedido.fechaSolicitud = new Date().toLocaleString();
         pedido.latOrigen = item.longitud;
         pedido.lonOrigen = item.latitude;
         pedido.wincha = params.id;
-        pedido.usuario = authValues.user.multiFactor.user.uid;
+        pedido.usuario = authValues.uid;
+        pedido.proveedor = wincha.owner;
         console.log('PEDIDO', pedido);
         let res = await addObjectToCollection({ collection: "orders", objectData: pedido });
         if (!res) {
@@ -177,12 +173,12 @@ const DetalleWincha: React.FC = () => {
             <IonHeader>
                 <IonToolbar>
                     <IonButtons slot="start">
-                        <IonButton routerLink={"/home"} onClick={() => clear()}><IonIcon slot='icon-only' icon={arrowBack}></IonIcon></IonButton>
+                        <IonButton routerLink={"/winchas"} onClick={() => clear()}><IonIcon slot='icon-only' icon={arrowBack}></IonIcon></IonButton>
                     </IonButtons>
                     <IonTitle>Detalle Wincha</IonTitle>
 
                     {authValues.userInfo?.perfil === 'C' ? (<IonButtons slot="end">
-                        <IonButton className='login-button' expand='full' onClick={() => reservarVehicle()}>Solicitar</IonButton>
+                        <IonButton className='login-button' expand='full' onClick={() => createOrder()}>Solicitar</IonButton>
                     </IonButtons>) : (
                         <IonButtons slot="end"> <IonButton routerLink={`/editWincha/${params.id}`}><IonIcon slot='icon-only' icon={pencil}></IonIcon></IonButton>
                             <IonButton onClick={() => deleteVehicleById()}><IonIcon slot='icon-only' icon={trash}></IonIcon></IonButton>
@@ -265,7 +261,7 @@ const DetalleWincha: React.FC = () => {
                                     <IonLabel>Precio por kilometro: ${wincha.price.precioKilometro}</IonLabel>
                                 </IonItem>
                                 {authValues.userInfo?.perfil === 'P' ? (<IonButton className='login-button' expand='full' onClick={() => setIsOpen(true)}>Actualizar Precio</IonButton>
-                                ) : (<IonButton className='login-button' expand='full' onClick={() => reservarVehicle()}>Solicitar</IonButton>
+                                ) : (<IonButton className='login-button' expand='full' onClick={() => createOrder()}>Solicitar</IonButton>
                                 )}
                             </IonCardContent>
                         </IonCard>) : (
@@ -278,7 +274,7 @@ const DetalleWincha: React.FC = () => {
                                         <IonLabel>No ha registrado un precio</IonLabel>
                                     </IonItem>
                                     {authValues.userInfo?.perfil === 'P' ? (<IonButton className='login-button' expand='full' onClick={() => setIsOpen(true)}>Agregar Precio</IonButton>
-                                    ) : (<IonButton className='login-button' expand='full' onClick={() => reservarVehicle()}>Solicitar</IonButton>)}
+                                    ) : (<IonButton className='login-button' expand='full' onClick={() => createOrder()}>Solicitar</IonButton>)}
                                 </IonCardContent>
                             </IonCard>
                         )}

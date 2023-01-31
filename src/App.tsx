@@ -1,6 +1,6 @@
 import React from 'react';
 import { Redirect, Route } from 'react-router-dom';
-import { IonApp, IonLoading, IonRouterOutlet, setupIonicReact } from '@ionic/react';
+import { IonApp, IonIcon, IonLabel, IonLoading, IonRouterOutlet, IonTabBar, IonTabButton, IonTabs, setupIonicReact } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
 import Home from './pages/Home';
 import Login from './pages/Login';
@@ -31,6 +31,10 @@ import CreateWincha from './pages/CreateWincha';
 import DetalleWincha from './pages/DetalleWincha';
 import EditWincha from './pages/EditWincha';
 import EditUser from './pages/EditUser';
+import Orders from './pages/ListOrders';
+import Winchas from './pages/ListWinchas';
+import { bagHandleOutline, carOutline } from 'ionicons/icons';
+import DetailOrder from './pages/DetalleOrder';
 
 setupIonicReact();
 
@@ -95,6 +99,15 @@ const App: React.FC = () => {
             </Route>
             <Route exact path="/editUser">
               <EditUser />
+            </Route>
+            <Route exact path="/winchas">
+              <Winchas />
+            </Route>
+            <Route exact path="/orders">
+              <Orders />
+            </Route>
+            <Route exact path="/detalleOrden/:id">
+              <DetailOrder />
             </Route>
           </IonRouterOutlet>
         </IonReactRouter>
