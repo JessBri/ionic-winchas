@@ -1,4 +1,4 @@
-import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonInput, IonButton, IonItem, IonLabel, IonLoading, IonImg, IonCard, IonButtons, IonIcon } from '@ionic/react';
+import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonInput, IonButton, IonItem, IonLabel, IonLoading, IonImg, IonCard, IonButtons, IonIcon, useIonViewDidEnter } from '@ionic/react';
 import React, { useState } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import { Geolocation } from '@capacitor/geolocation';
@@ -30,6 +30,9 @@ const EditWincha: React.FC<WinchaProps> = () => {
         estado: true
     });
 
+    useIonViewDidEnter(() => {
+        setShowLoading(true);
+    });
 
 
     const getVehicleById = async () => {
@@ -61,8 +64,10 @@ const EditWincha: React.FC<WinchaProps> = () => {
     const takePhoto = async () => {
         const cameraPhoto = await Camera.getPhoto({
             resultType: CameraResultType.Base64,
-            source: CameraSource.Camera,
-            quality: 100
+            source: CameraSource.Prompt,
+            quality: 100,
+            width: 800,
+            height:800
         });
         const photo = `data:image/jpeg;base64,${cameraPhoto.base64String}`;
         return setItem({
@@ -92,37 +97,37 @@ const EditWincha: React.FC<WinchaProps> = () => {
                     <IonButtons slot="start">
                         <IonButton routerLink={`/detalleWincha/${params.id}`}><IonIcon slot='icon-only' icon={arrowBack}></IonIcon></IonButton>
                     </IonButtons>
-                    <IonTitle>Editar Vehiculo</IonTitle>
+                    <IonTitle>Editar Vehículo</IonTitle>
                 </IonToolbar>
             </IonHeader>
             <IonContent className='ion-padding'>
                 <IonLoading isOpen={loading} />
                 <IonItem>
-                    <IonLabel position="floating">Placa</IonLabel>
+                    <IonLabel position="floating">Placa <span className='asterisk'>*</span></IonLabel>
                     <IonInput required onIonChange={(e: any) => setItem({ ...item, placa: e.target.value })} value={item.placa} />
                 </IonItem>
                 <IonItem>
-                    <IonLabel position="floating">Marca</IonLabel>
+                    <IonLabel position="floating">Marca <span className='asterisk'>*</span></IonLabel>
                     <IonInput onIonChange={(e: any) => setItem({ ...item, marca: e.target.value })} value={item.marca} />
                 </IonItem>
                 <IonItem>
-                    <IonLabel position="floating">Tipo</IonLabel>
+                    <IonLabel position="floating">Tipo <span className='asterisk'>*</span></IonLabel>
                     <IonInput onIonChange={(e: any) => setItem({ ...item, tipo: e.target.value })} value={item.tipo} />
                 </IonItem>
                 <IonItem>
-                    <IonLabel position="floating">Año</IonLabel>
+                    <IonLabel position="floating">Año <span className='asterisk'>*</span></IonLabel>
                     <IonInput onIonChange={(e: any) => setItem({ ...item, anio: e.target.value })} value={item.anio} />
                 </IonItem >
                 <IonItem>
-                    <IonLabel position="floating">Altura(m)</IonLabel>
+                    <IonLabel position="floating">Altura(m) <span className='asterisk'>*</span></IonLabel>
                     <IonInput onIonChange={(e: any) => setItem({ ...item, altura: e.target.value })} value={item.altura} />
                 </IonItem >
                 <IonItem>
-                    <IonLabel position="floating">Largo(m)</IonLabel>
+                    <IonLabel position="floating">Largo(m) <span className='asterisk'>*</span></IonLabel>
                     <IonInput onIonChange={(e: any) => setItem({ ...item, largo: e.target.value })} value={item.largo} />
                 </IonItem >
                 <IonItem>
-                    <IonLabel position="floating">Peso(kg)</IonLabel>
+                    <IonLabel position="floating">Peso(kg) <span className='asterisk'>*</span></IonLabel>
                     <IonInput onIonChange={(e: any) => setItem({ ...item, peso: e.target.value })} value={item.peso} />
                 </IonItem >
                 <IonItem >

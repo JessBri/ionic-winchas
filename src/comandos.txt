@@ -12,6 +12,8 @@ npm i cordova-plugin-email-composer
 npm install --save @ionic-native/email-composer
 npm i @awesome-cordova-plugins/email-composer @awesome-cordova-plugins/core
 
+npm install react-hook-form
+
 export CAPACITOR_ANDROID_STUDIO_PATH="/snap/android-studio/125/android-studio/bin/studio.sh"
 
 						

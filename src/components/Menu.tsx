@@ -17,13 +17,14 @@ import AuthContext from "../my-context";
 import { useHistory } from 'react-router';
 
 export const Example = () => {
-    const { logout } = React.useContext(AuthContext);
+    const { logout, authValues } = React.useContext(AuthContext);
     const history = useHistory();
 
     const logoutUser = async () => {
         await logout();
         history.push('/')
     }
+    
     return (
         <>
             <IonMenu contentId="main-content">
@@ -58,7 +59,6 @@ export const Example = () => {
                     </IonToolbar>
                 </IonHeader>
                 <IonContent className="ion-padding">
-                    
                 </IonContent>
             </IonPage>
         </>

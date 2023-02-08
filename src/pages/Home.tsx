@@ -7,6 +7,20 @@ import './Home.css';
 import { carOutline, bagHandleOutline } from 'ionicons/icons';
 
 const Home: React.FC = () => {
+  const { authValues, getUserData, queryObjectCollection, queryObjectAllVehicles } = React.useContext(AuthContext);
+    const [showLoading, setShowLoading] = React.useState<boolean>(true);
+
+  React.useEffect(() => {
+    if (showLoading) {
+        (async () => {
+            console.log('aquii');
+            let user = await getUserData();
+            setShowLoading(false);
+        })();
+
+    }
+
+}, [getUserData, showLoading]);
 
   return (
     <IonPage>
@@ -15,7 +29,7 @@ const Home: React.FC = () => {
           <IonButtons slot="start">
             <IonMenuButton />
           </IonButtons>
-          <IonTitle>App</IonTitle>
+          <IonTitle></IonTitle>
 
         </IonToolbar>
       </IonHeader>

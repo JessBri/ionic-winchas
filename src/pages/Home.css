@@ -34,20 +34,55 @@
   display: flex;
 }
 
-.estadoA{
+.estadoA {
   border: 2px solid #2dd36f;
-    border-radius: 5px;
-    margin: 0px 15px;
+  border-radius: 5px;
+  margin: 10px 15px;
 }
 
-.estadoR{
+.estadoR {
   border: 2px solid #eb445a;
-    border-radius: 5px;
-    margin: 0px 15px;
+  border-radius: 5px;
+  margin: 10px 15px;
 }
 
-.estadoS{
+.estadoS {
   border: 2px solid #3dc2ff;
-    border-radius: 5px;
-    margin: 10px 15px;
+  border-radius: 5px;
+  margin: 10px 15px;
+}
+
+.error {
+  color: #ff4961;
+  font-size: 12px;
+}
+
+.asterisk{
+  color: #ff4961;
+}
+
+.recoverPass{
+  top: 20%;
+  position: absolute;
+  width: 90%;
+}
+
+.item-label-floating .sc-ion-input-ios-h{
+  border: 1px solid #bfbfbf;
+  border-radius: 5px;
+  margin-bottom: 5px;
+  --padding-start: 8px;
+  --padding-top: 10px;
+}
+
+.has-focus.sc-ion-input-ios-h{
+  border: 1px solid #3a7be0;
+}
+
+.label-floating.sc-ion-label-ios-h{
+  margin-inline: 8px !important;
+}
+
+form ion-item{
+  --border-color: #ffffff;
 }

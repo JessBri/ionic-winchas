@@ -1,6 +1,6 @@
 import React from 'react';
 import { Redirect, Route } from 'react-router-dom';
-import { IonApp, IonIcon, IonLabel, IonLoading, IonRouterOutlet, IonTabBar, IonTabButton, IonTabs, setupIonicReact } from '@ionic/react';
+import { IonApp, IonIcon, IonLabel, IonLoading, IonRouterOutlet, IonTabBar, IonTabButton, IonTabs, setupIonicReact, useIonViewDidEnter } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
 import Home from './pages/Home';
 import Login from './pages/Login';
@@ -33,8 +33,8 @@ import EditWincha from './pages/EditWincha';
 import EditUser from './pages/EditUser';
 import Orders from './pages/ListOrders';
 import Winchas from './pages/ListWinchas';
-import { bagHandleOutline, carOutline } from 'ionicons/icons';
 import DetailOrder from './pages/DetalleOrder';
+import RecoverPassword from './pages/ForgotPassword';
 
 setupIonicReact();
 
@@ -51,6 +51,8 @@ const App: React.FC = () => {
     }
   }, [initialize, showLoading, setShowLoading]);
 
+  console.log('authenticated', authValues.authenticated );
+
   if (showLoading) {
     // setShowLoading(false);
     return (
@@ -62,7 +64,6 @@ const App: React.FC = () => {
 
   return (
     <IonApp>
-      {/* <IonLoading message="Cargando" isOpen={showLoading} /> */}
       {!authValues.authenticated ? (
         <IonReactRouter>
 
@@ -75,6 +76,9 @@ const App: React.FC = () => {
             </Route>
             <Route exact path="/register">
               <Register />
+            </Route>
+            <Route exact path="/password">
+              <RecoverPassword />
             </Route>
           </IonRouterOutlet>
         </IonReactRouter>

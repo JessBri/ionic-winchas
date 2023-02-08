@@ -27,22 +27,27 @@ export const AuthProvider: React.FC<PropsWithChildren> = ({ children }) => {
 
     const login = ({ username, password }: { username: string; password: string }) => {
         return new Promise(async (resolve) => {
-            let authUser = await firebase.auth().signInWithEmailAndPassword(username, password);
-            if (authUser) {
-                setAuthValues({
-                    ...authValues,
-                    authenticated: true,
-                    user: { ...authUser },
-                    uid: firebase.auth().currentUser?.uid
-                });
-                getUserData();
-                resolve(true);
-            } else {
+            try {
+                let authUser = await firebase.auth().signInWithEmailAndPassword(username, password);
+                console.log('authUser', authUser);
+                if (authUser) {
+                    setAuthValues({
+                        ...authValues,
+                        authenticated: true,
+                        user: { ...authUser },
+                        uid: firebase.auth().currentUser?.uid
+                    });
+                    getUserData();
+                    resolve(true);
+                } else {
+                    resolve(false);
+                }
+            } catch (e) {
+                console.log('authUser', e);
                 resolve(false);
             }
-        }
 
-        )
+        })
     };
 
     const getUserData = () => {
@@ -84,25 +89,24 @@ export const AuthProvider: React.FC<PropsWithChildren> = ({ children }) => {
         )
     };
 
-    const createAccount = ({ username, password, nombre, apellido, identificacion, telefono, direccion, typeUser }: { username: string; password: string; nombre: string; apellido: string; identificacion: string; telefono: string; direccion: string; typeUser: string; }) => {
+    const createAccount = ({ values, typeUser }: { values: any; typeUser: string; }) => {
         return new Promise(async (resolve) => {
             try {
-                let authUser = await firebase.auth().createUserWithEmailAndPassword(username, password);
+                let authUser = await firebase.auth().createUserWithEmailAndPassword(values.username, values.pass);
                 if (authUser) {
                     await firebase.auth().currentUser?.updateProfile({
-                        displayName: nombre + ' ' + apellido
+                        displayName: values.nombre + ' ' + values.apellido
                     })
                     let usersRef = firebase.firestore().collection("usuarios").doc(firebase.auth().currentUser?.uid);
 
                     let newUserData = {
-                        nombre: nombre,
-                        apellido: apellido,
-                        identificacion: identificacion,
-                        telefono: telefono,
-                        imagen: "",
-                        direccion: direccion,
+                        nombre: values.nombre,
+                        apellido: values.apellido,
+                        identificacion: values.identificacion,
+                        telefono: values.telefono,
+                        direccion: values.direccion,
                         perfil: typeUser,
-                        email:username
+                        email: values.username
                     }
 
                     await usersRef.set(newUserData);
@@ -137,6 +141,11 @@ export const AuthProvider: React.FC<PropsWithChildren> = ({ children }) => {
             user: null,
         });
         return Promise.resolve(true);
+    };
+
+
+    const recoverPassword = ({ email }: { email: string }) => {
+        return firebase.auth().sendPasswordResetEmail(email);
     };
 
     const addObjectToCollection = ({ collection, objectData }: { collection: string; objectData: any; }) => {
@@ -246,7 +255,7 @@ export const AuthProvider: React.FC<PropsWithChildren> = ({ children }) => {
         );
     };
 
-    const queryOrdersByCliente= ({ collection }: { collection: string; }) => {
+    const queryOrdersByCliente = ({ collection }: { collection: string; }) => {
         let currentUserId = firebase.auth().currentUser?.uid;
         let collectionRef = firebase.firestore().collection(collection);
 
@@ -265,6 +274,27 @@ export const AuthProvider: React.FC<PropsWithChildren> = ({ children }) => {
                         });
                     });
                     return results;
+                })
+                .catch((error) => {
+                    console.log("Error getting documents: ", error);
+                    return error;
+                })
+        );
+    };
+
+    const queryOrdersByWincha = ({ id }: { id: string; }) => {
+        let collectionRef = firebase.firestore().collection("orders");
+
+        return (
+            collectionRef
+                .where('content.wincha', '==', id,)
+                .get()
+                .then((querySnapshot) => {
+                    console.log('querySnapshot', querySnapshot);
+                    querySnapshot.forEach(async (doc) => {
+                        removeObjectFromCollection({collection:"orders", id: doc.id})
+                    });
+                    return true;
                 })
                 .catch((error) => {
                     console.log("Error getting documents: ", error);
@@ -371,6 +401,8 @@ export const AuthProvider: React.FC<PropsWithChildren> = ({ children }) => {
         queryObjectById,
         editObjectById,
         removeObjectFromCollection,
+        recoverPassword,
+        queryOrdersByWincha,
         login,
         logout
     }

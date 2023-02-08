@@ -12,11 +12,13 @@ import './Home.css';
 import { toast } from '../toast';
 
 const DetalleWincha: React.FC = () => {
-    const { authValues, queryObjectById, editObjectById, removeObjectFromCollection, addObjectToCollection } = React.useContext(AuthContext);
+    const { authValues, queryObjectById, editObjectById, queryOrdersByWincha, removeObjectFromCollection, addObjectToCollection } = React.useContext(AuthContext);
     const params = useParams<{ id: string }>();
     const [showLoading, setShowLoading] = React.useState<boolean>(true);
     const [showBusy, setShowBusy] = React.useState<boolean>(true);
+    const [showError, setShowError] = React.useState<boolean>(false);
     const [isOpen, setIsOpen] = useState<boolean>(false);
+    const [isDelete, setIsDetele] = useState<boolean>(false);
     const [wincha, setWincha] = React.useState<any>();
     const history = useHistory();
     const [item, setItem] = useState<any>({
@@ -38,9 +40,9 @@ const DetalleWincha: React.FC = () => {
         lonDestino: '',
         wincha: '',
         usuario: '',
-        proveedor:''
+        proveedor: ''
     });
-    
+
     useIonViewDidEnter(() => {
         setShowLoading(true);
         setShowBusy(true);
@@ -64,12 +66,19 @@ const DetalleWincha: React.FC = () => {
     }
 
     const deleteVehicleById = async () => {
+        setIsDetele(false);
         setShowLoading(true)
         let res = await removeObjectFromCollection({ collection: "vehicles", id: params.id });
-
+        
         if (res) {
-            toast('La wincha se ha eliminado exitosamente')
-            history.push('/home')
+            // history.push('/winchas')
+            let aux = await queryOrdersByWincha({id:params.id });
+            if(aux){
+                toast('La wincha se ha eliminado exitosamente')
+            }else {
+                toast('Ha ocurrido un error')
+            }
+            
         } else {
             toast('Ha ocurrido un error')
         }
@@ -90,6 +99,10 @@ const DetalleWincha: React.FC = () => {
 
     function cancel() {
         setIsOpen(false);
+        setPrice({
+            precioLevantamiento: '',
+            precioKilometro: '',
+        });
     }
 
     const sendEmail = async () => {
@@ -97,16 +110,17 @@ const DetalleWincha: React.FC = () => {
             app: 'gmail',
             to: authValues.userInfo.email,
             subject: 'Tienes una nueva solicitud de wincha',
-            body: `El usuario ${authValues.userInfo.nombre} ${authValues.userInfo.nombre} ha solicitado el alquiler de la wincha ${wincha.content.placa} ${wincha.content.marca}`,
+            body: `El usuario ${authValues.userInfo.nombre} ${authValues.userInfo.apellido} ha solicitado el alquiler de la wincha ${wincha.content.placa} ${wincha.content.marca}. Mira el trayecto solicitado <a href="https://www.google.com/maps/dir/${item.latitude},${item.longitud}/${wincha.content.latitude},${wincha.content.longitud}" target="_blank" rel="noreferrer">aquí</a>`,
             isHtml: true
         };
         let res = await EmailComposer.open(email);
         console.log('EMAIL', res);
+        history.push('/orders');
     }
 
     const createOrder = async () => {
         setShowBusy(true)
-        if(wincha.price){
+        if (wincha.price) {
             pedido.precioLevantamiento = wincha.price.precioLevantamiento;
             pedido.precioKilometro = wincha.price.precioKilometro;
         }
@@ -129,18 +143,24 @@ const DetalleWincha: React.FC = () => {
     }
 
     const addPrice = async () => {
-        setShowBusy(true)
-        console.log('EDIT', price);
-        wincha.price = price;
-        console.log('EDIT', wincha);
-        let res = await editObjectById({ collection: "vehicles", id: params.id, obj: wincha });
-        if (!res) {
-            toast('Ha ocurrido un error')
-        } else {
-            toast('El precio se ha actualizado exitosamente!')
-            setIsOpen(false);
+        if (price.precioLevantamiento != '' && price.precioKilometro) {
+            setShowError(false);
+            setShowBusy(true)
+            console.log('EDIT', price);
+            wincha.price = price;
+            console.log('EDIT', wincha);
+            let res = await editObjectById({ collection: "vehicles", id: params.id, obj: wincha });
+            if (!res) {
+                toast('Ha ocurrido un error')
+            } else {
+                toast('El precio se ha actualizado exitosamente!')
+                setIsOpen(false);
+            }
+            setShowBusy(false)
+        }else{
+            setShowError(true);
         }
-        setShowBusy(false)
+       
     }
 
     const newLocation = async () => {
@@ -181,7 +201,7 @@ const DetalleWincha: React.FC = () => {
                         <IonButton className='login-button' expand='full' onClick={() => createOrder()}>Solicitar</IonButton>
                     </IonButtons>) : (
                         <IonButtons slot="end"> <IonButton routerLink={`/editWincha/${params.id}`}><IonIcon slot='icon-only' icon={pencil}></IonIcon></IonButton>
-                            <IonButton onClick={() => deleteVehicleById()}><IonIcon slot='icon-only' icon={trash}></IonIcon></IonButton>
+                            <IonButton onClick={() => setIsDetele(true)}><IonIcon slot='icon-only' icon={trash}></IonIcon></IonButton>
                         </IonButtons>
                     )}
 
@@ -261,8 +281,7 @@ const DetalleWincha: React.FC = () => {
                                     <IonLabel>Precio por kilometro: ${wincha.price.precioKilometro}</IonLabel>
                                 </IonItem>
                                 {authValues.userInfo?.perfil === 'P' ? (<IonButton className='login-button' expand='full' onClick={() => setIsOpen(true)}>Actualizar Precio</IonButton>
-                                ) : (<IonButton className='login-button' expand='full' onClick={() => createOrder()}>Solicitar</IonButton>
-                                )}
+                                ) : (<></>)}
                             </IonCardContent>
                         </IonCard>) : (
                             <IonCard>
@@ -274,10 +293,11 @@ const DetalleWincha: React.FC = () => {
                                         <IonLabel>No ha registrado un precio</IonLabel>
                                     </IonItem>
                                     {authValues.userInfo?.perfil === 'P' ? (<IonButton className='login-button' expand='full' onClick={() => setIsOpen(true)}>Agregar Precio</IonButton>
-                                    ) : (<IonButton className='login-button' expand='full' onClick={() => createOrder()}>Solicitar</IonButton>)}
+                                    ) : (<></>)}
                                 </IonCardContent>
                             </IonCard>
                         )}
+                        {authValues.userInfo?.perfil === 'P' ? (<></>) : (<IonCard><IonButton className='login-button' expand='full' onClick={() => createOrder()}>Solicitar</IonButton></IonCard>)}
                         {authValues.userInfo?.perfil === 'P' ? (<></>) : (
                             <IonCard>
                                 <IonText>
@@ -300,16 +320,37 @@ const DetalleWincha: React.FC = () => {
                                 </IonToolbar>
                             </IonHeader>
                             <IonContent className="ion-padding">
-                                <IonItem>
-                                    <IonLabel position="floating">Precio por levantamiento($)</IonLabel>
-                                    <IonInput required onIonChange={(e: any) => setPrice({ ...price, precioLevantamiento: e.target.value })} />
-                                </IonItem>
-                                <IonItem>
-                                    <IonLabel position="floating">Precio por kilometro($)</IonLabel>
-                                    <IonInput onIonChange={(e: any) => setPrice({ ...price, precioKilometro: e.target.value })} />
-                                </IonItem>
-                                <IonButton className='login-button' expand='full' onClick={() => addPrice()}>Guardar</IonButton>
-
+                                <form>
+                                    <IonItem>
+                                        <IonLabel position="floating">Precio por levantamiento($) <span className='asterisk'>*</span></IonLabel>
+                                        <IonInput required onIonChange={(e: any) => setPrice({ ...price, precioLevantamiento: e.target.value })} />
+                                    </IonItem>
+                                    <IonItem>
+                                        <IonLabel position="floating">Precio por kilometro($) <span className='asterisk'>*</span></IonLabel>
+                                        <IonInput onIonChange={(e: any) => setPrice({ ...price, precioKilometro: e.target.value })} />
+                                    </IonItem>
+                                    {showError ? (<p className="error">Ingresa los precios</p>):''} 
+                                    <IonButton className='login-button' expand='full' onClick={() => addPrice()}>Guardar</IonButton>
+                                </form>
+                            </IonContent>
+                        </IonModal>
+                        <IonModal isOpen={isDelete}>
+                            <IonHeader>
+                                <IonToolbar>
+                                    <IonButtons slot="start">
+                                        <IonButton onClick={() => setIsDetele(false)}>Cancel</IonButton>
+                                    </IonButtons>
+                                    <IonTitle></IonTitle>
+                                </IonToolbar>
+                            </IonHeader>
+                            <IonContent className="ion-padding">
+                            <IonLoading message="Eliminando" isOpen={showBusy} duration={1000} />
+                                <form>
+                                    <IonItem>
+                                        <IonText>¿Esta seguro que desea eliminar la wincha {wincha.content.marca} {wincha.content.placa}?</IonText>
+                                    </IonItem>
+                                    <IonButton className='login-button' expand='full' color={'danger'} onClick={() => deleteVehicleById()}>Eliminar</IonButton>
+                                </form>
                             </IonContent>
                         </IonModal>
                     </div>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { IonButton, IonButtons, IonContent, IonHeader, IonItem, IonLabel, IonList, IonLoading, IonPage, IonTitle, IonToolbar, IonImg, IonThumbnail, IonMenuButton, IonText, IonIcon } from '@ionic/react';
+import { IonButton, IonButtons, IonContent, IonHeader, IonItem, IonLabel, IonList, IonLoading, IonPage, IonTitle, IonToolbar, IonImg, IonThumbnail, IonMenuButton, IonText, IonIcon, useIonViewDidEnter } from '@ionic/react';
 import AuthContext from "../my-context";
 import { useHistory } from 'react-router';
 
@@ -23,10 +23,14 @@ const Orders: React.FC = () => {
                 setShowLoading(false);
                 console.log('aquii', user, showLoading);
             })();
-
         }
 
     }, [getUserData, showLoading]);
+
+    useIonViewDidEnter(() => {
+        setShowLoading(true);
+        setShowBusy(true);
+    });
 
 
     const getOrdersByProveedor = async () => {
@@ -70,7 +74,7 @@ const Orders: React.FC = () => {
                     <IonButtons slot="start">
                         <IonMenuButton/>
                     </IonButtons>
-                    <IonTitle>{authValues.userInfo?.perfil === 'C' ? 'Cliente' : 'Proveedor'}</IonTitle>
+                    <IonTitle>Lista de ordenes</IonTitle>
                     <IonButtons slot="end">
                     <IonButton routerLink={"/home"}><IonIcon slot='icon-only' icon={arrowBack}></IonIcon></IonButton>
                     </IonButtons>
@@ -79,9 +83,6 @@ const Orders: React.FC = () => {
             </IonHeader>
             <IonContent fullscreen>
                 <IonLoading message="Consultando datos" isOpen={showBusy} />
-                <IonText color="primary">
-                    <h3 className='ion-text-center'>Lista de ordenes</h3>
-                </IonText >
                 <IonList>
                     {orders?.map((doc: any) =>
                         <IonItem className={'itemCard' + (` estado${doc.content.estado}`)} key={doc.id} onClick={() => { history.replace(`/detalleOrden/${doc.id}`); history.go(1) }}>
